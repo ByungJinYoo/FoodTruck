@@ -1,6 +1,7 @@
 package com.java.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,7 +30,7 @@ public class LoginShop extends HttpServlet {
 		action(request, response);
 	}
 
-	protected void action (HttpServletRequest request, HttpServletResponse response) {
+	protected void action (HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
 		HttpSession session = request.getSession();
 		ShopLoginDao dao = new ShopLoginDao();
@@ -38,7 +39,10 @@ public class LoginShop extends HttpServlet {
 		pw = request.getParameter("shop_pw");
 
 
-		int result = dao.login(id, pw);
+		int result = dao.login(id, pw);	
+		
+		response.setContentType("text/html; charset=euc-kr");
+		PrintWriter out = response.getWriter();
 	
 		try {
 			if (result == 1) {
@@ -48,6 +52,13 @@ public class LoginShop extends HttpServlet {
 
 			} else if (result == -1) {
 				System.out.print(id + " --- " + pw + " 로그인실패 ");
+				   String msg = "로그인 실패.";
+				   String str="";
+				   str = "<script language='javascript'>";
+				   str += "alert('"+ msg + "');";   //얼럿창 띄우기
+				   str += "document.location.href='/FoodTruck/FoodTruckPage/login_shop.jsp'";    //이전페이지로 가기
+				   str += "</script>";
+				   out.print(str);
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
